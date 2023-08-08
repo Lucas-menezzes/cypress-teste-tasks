@@ -1,0 +1,12 @@
+{
+  "name": "cypress-express-mark",
+  "version": "1.0.0",
+  "description": "Projeto mark",
+  "main": "index.js",
+  "author": "Lucas Menezes",
+  "license": "MIT",
+  "devDependencies": {
+    "@faker-js/faker": "^8.0.2",
+    "cypress": "^12.17.3"
+  }
+}
