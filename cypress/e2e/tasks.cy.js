@@ -3,60 +3,57 @@ import { faker } from '@faker-js/faker';
 const randomName = faker.person.fullName();
 
 describe('tarefas', () => {
-  it('deve cadastrar uma nova tarefa', ()=> {
-    ///limpa a massa de teste faz um delete na requisição
-    cy.request({
-        url: 'http://localhost:3333/helper/tasks',
-        method: 'DELETE',
-        body: {name:"Ler um livro"}
-    }).then((response)=>{
-        expect(response.status).to.eq(204)
+    context('cadastro', () => {
+        it('deve cadastrar uma nova tarefa', ()=> {
+
+            const task1 = {
+                name:"compras",
+                is_done:false
+            }
+            cy.deleteTaskName(task1.name)
+            cy.createTask(task1.name)
+            cy.contains('main div p', task1.name)
+          
+        }) 
+        it('Não deve permitir tarefa duplicada', ()=> {
+            const task = {
+                name:"Academia",
+                is_done:false
+            } 
+            cy.createTask(task.name)
+            cy.createTask(task.name)
+            cy.contains('#swal2-html-container', 'Task already exists!')
+        
+        })
+        it('Validar campo obrigatório', ()=> {          
+            cy.createTask()
+            cy.get('#newTask')
+                .invoke('prop', 'validationMessage')
+                .should((text) => {
+                    expect(
+                    'This is a required field'
+                    ).to.eq(text)
+            })
+        })
     })
+    context('atualização',() =>{
+        it.only('deve concluir uma tarefa',()=> {
+            const task3 ={
+                name:'contas',
+                is_done:false
+            }
 
-    cy.visit('http://localhost:3000')
-    cy.get('#newTask')
-        .type('Ler um livro')
-    cy.get('button[type=submit]')   
-    ///(//button[contains(text(), "Create")])
-    /// cy.contains("button", "Create").click()
-        .click()
-    ///Validando task
-    // cy.get('main div p')
-    // .should('text', 'Ler um livro')
-    cy.contains('main div p', 'Ler um livro')
-  }) 
+            cy.deleteTaskName(task3.name)
+            cy.createTaskApi(task3)
 
-  it.only('Não deve permitir tarefa duplicada', () =>{
+            cy.visit('http://localhost:3000/')
+            cy.contains('p', task3.name)
+                .parent()
+                .find('._listItemToggle_1kgm5_16')
+                .click()
 
-    cy.request({
-        url: 'http://localhost:3333/helper/tasks',
-        method: 'DELETE',
-        body: {name:"Academia"}
-    }).then((response)=>{
-        expect(response.status).to.eq(204)
+            cy.contains('p', task3.name)
+                .should('have.css', 'text-decoration-line', 'line-through')
+        })
     })
-    
-      ///Dado que eu tenho uma tarefa duplicada
-    cy.request({
-        url: 'http://localhost:3333/tasks',
-        method: 'POST',
-        body: {name:"Academia", is_done:false }
-    }).then((response)=>{
-        expect(response.status).to.eq(201)
-    })
-
-    // cy.visit('http://localhost:3000')
-    // cy.get('#newTask')
-    //     .type('Academia')
-    // cy.get('button[type=submit]')
-    //     .click()
-
-    cy.visit('http://localhost:3000')
-    cy.get('#newTask')
-        .type('Academia')
-    cy.get('button[type=submit]')
-        .click()
-    cy.contains('#swal2-html-container', 'Task already exists!')
-
-  })
 })
