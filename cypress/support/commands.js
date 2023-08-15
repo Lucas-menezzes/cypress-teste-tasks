@@ -25,7 +25,7 @@
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
 Cypress.Commands.add('createTask', (taskName = '') => {
-    cy.visit('http://localhost:3000')
+    cy.visit('/')
     if (taskName !== '') {
         cy.get('#newTask')
         .type(taskName)
@@ -36,16 +36,16 @@ Cypress.Commands.add('createTask', (taskName = '') => {
 })
 Cypress.Commands.add('deleteTaskName',(taskName)=>{
     cy.request({
-        url: 'http://localhost:3333/helper/tasks',
+        url: Cypress.env('apiUrl') + '/helper/tasks',
         method: 'DELETE',
         body: {name: taskName}
     }).then((response)=>{
         expect(response.status).to.eq(204)
     })
-})
+}) 
 Cypress.Commands.add('createTaskApi', (task)=>{
     cy.request({
-        url: 'http://localhost:3333/tasks',
+        url: Cypress.env('apiUrl') + '/tasks',
         method: 'POST',
         body: task
     }).then((response)=>{

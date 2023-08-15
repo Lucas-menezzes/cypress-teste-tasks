@@ -37,7 +37,7 @@ describe('tarefas', () => {
         })
     })
     context('atualização',() =>{
-        it.only('deve concluir uma tarefa',()=> {
+        it('deve concluir uma tarefa',()=> {
             const task3 ={
                 name:'contas',
                 is_done:false
@@ -46,7 +46,7 @@ describe('tarefas', () => {
             cy.deleteTaskName(task3.name)
             cy.createTaskApi(task3)
 
-            cy.visit('http://localhost:3000/')
+            cy.visit('/')
             cy.contains('p', task3.name)
                 .parent()
                 .find('._listItemToggle_1kgm5_16')
