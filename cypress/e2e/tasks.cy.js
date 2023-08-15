@@ -3,6 +3,14 @@ import { faker } from '@faker-js/faker';
 const randomName = faker.person.fullName();
 
 describe('tarefas', () => {
+
+    let testData;
+    before (() => {
+        cy.fixture('tasks').then(t => {
+            testData = t
+        })
+    })
+
     context('cadastro', () => {
         it('deve cadastrar uma nova tarefa', ()=> {
 
@@ -15,11 +23,9 @@ describe('tarefas', () => {
             cy.contains('main div p', task1.name)
           
         }) 
-        it('Não deve permitir tarefa duplicada', ()=> {
-            const task = {
-                name:"Academia",
-                is_done:false
-            } 
+        it.only('Não deve permitir tarefa duplicada', ()=> {
+            const task = testData.dup
+
             cy.createTask(task.name)
             cy.createTask(task.name)
             cy.contains('#swal2-html-container', 'Task already exists!')
